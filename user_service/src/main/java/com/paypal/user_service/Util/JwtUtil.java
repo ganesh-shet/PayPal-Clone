@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    private static final String JWT_SECRET = "secret83108413809980315858";
+    private static final String JWT_SECRET = "secret83108413809980315858ganeshshet1234gshet";
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
