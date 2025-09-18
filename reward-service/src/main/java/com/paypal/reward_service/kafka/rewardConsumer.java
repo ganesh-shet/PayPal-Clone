@@ -32,7 +32,7 @@ public class rewardConsumer {
             reward.setTransactionId(transaction.getId());
 
             rewardRepository.save(reward);
-            System.out.println("✅ Processed and saved reward for transaction: ");
+            System.out.println("✅ Processed and saved reward for transaction: " +reward);
     }catch (Exception e){
             System.err.println("❌ Failed to process consumed message: " + e.getMessage());
             e.printStackTrace();
