@@ -2,7 +2,7 @@ package com.paypal.user_service.Util;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
-import java.util.HashMap;
+
 
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
