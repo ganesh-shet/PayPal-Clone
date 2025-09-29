@@ -46,6 +46,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             Claims claims = JwtUtil.validateToken(token);
             exchange.getRequest().mutate()
                     .header("X-User-Email", claims.getSubject())
+                    .header("X-User-ID", claims.get("user-id", String.class))
+                    .header("X-User-Role", claims.get("role", String.class))
                     .build();
 
             return chain.filter(exchange)
