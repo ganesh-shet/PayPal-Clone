@@ -1,5 +1,6 @@
 package com.paypal.user_service.service;
 
+import com.paypal.user_service.client.WalletClient;
 import com.paypal.user_service.entity.User;
 import com.paypal.user_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
-    private WalletService walletService;
+    private WalletClient walletClient;
 
     //Constructor
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, WalletClient walletClient) {
         this.userRepository = userRepository;
-        this.walletService = new WalletService();
+        this.walletClient = walletClient;
     }
 
     //Create User
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
             CreateWalletRequest request = new CreateWalletRequest();
             request.setUserId(savedUser.getId());
             request.setCurrency("INR");
-            walletService.createWallet(request);
+            walletClient.createWallet(request);
         } catch (Exception e) {
             userRepository.deleteById(savedUser.getId());
             throw new RuntimeException("Failed to create wallet for user. User creation rolled back.", e);
