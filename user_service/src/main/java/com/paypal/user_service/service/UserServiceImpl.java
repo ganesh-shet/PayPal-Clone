@@ -12,19 +12,28 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private WalletService walletService;
 
     //Constructor
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.walletService = new WalletService();
     }
 
     //Create User
     @Override
     public User createUser(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
+        User savedUser = userRepository.save(user);
+        try{
+            CreateWalletRequest request = new CreateWalletRequest();
+            request.setUserId(savedUser.getId());
+            request.setCurrency("INR");
+            walletService.createWallet(request);
+        } catch (Exception e) {
+            userRepository.deleteById(savedUser.getId());
+            throw new RuntimeException("Failed to create wallet for user. User creation rolled back.", e);
         }
-        return userRepository.save(user);
+        return savedUser;
     }
 
     //Get user by ID
