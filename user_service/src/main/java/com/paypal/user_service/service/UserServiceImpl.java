@@ -1,6 +1,7 @@
 package com.paypal.user_service.service;
 
 import com.paypal.user_service.client.WalletClient;
+import com.paypal.user_service.dto.CreateWalletRequest;
 import com.paypal.user_service.entity.User;
 import com.paypal.user_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
-    private WalletClient walletClient;
+    private final WalletClient walletClient;
 
     //Constructor
     public UserServiceImpl(UserRepository userRepository, WalletClient walletClient) {

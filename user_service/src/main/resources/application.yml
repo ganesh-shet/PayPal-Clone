@@ -17,3 +17,8 @@ spring:
 
   jwt:
     secret: 'hbccssjcacnaocac79798786cgahcacbcajcnkc'
+
+
+  cloud:
+    compatibility-verifier:
+      enabled: false

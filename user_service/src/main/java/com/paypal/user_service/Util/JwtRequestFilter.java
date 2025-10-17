@@ -22,52 +22,38 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     //Extracting the username
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
-        String username = null;
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        final String authHeader = request.getHeader("Authorization");
         String jwt = null;
+        String username = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            try{
-                username = jwtUtil.extractUsername(jwt);
-            }catch (Exception e){
-                e.printStackTrace();
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            jwt = authHeader.substring(7);
+            if (!jwt.isBlank()) {
+                try {
+                    username = jwtUtil.extractUsername(jwt);
+                    if (jwtUtil.validateToken(jwt, username)) {
+                        String role = jwtUtil.extractRole(jwt);
+                        UsernamePasswordAuthenticationToken authToken =
+                                new UsernamePasswordAuthenticationToken(
+                                        username,
+                                        null,
+                                        List.of(new SimpleGrantedAuthority(role))
+                                );
+                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                    }
+                } catch (Exception e) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT Token");
+                    return; // stop processing
+                }
             }
         }
 
-        //Not Authenticated user--->Do token validation
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if(jwtUtil.validateToken(jwt,username)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, null, null);
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
+        // Continue the filter chain (always call at the end)
+        chain.doFilter(request, response);
 
-        //Authorization --> RBAC
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            if(jwt == null || jwt.isBlank()){
-                filterChain.doFilter(request,response);
-                return;// Skip Processing if token is NULL
-            }
-            try{
-                username = jwtUtil.extractUsername(jwt);
-                String role = jwtUtil.extractRole(jwt);
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username,
-                        null,
-                        List.of(new SimpleGrantedAuthority(role)));
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                filterChain.doFilter(request,response);
-            }catch (Exception e){
-                e.printStackTrace(); // log the error
-            }
-        }else{
-            filterChain.doFilter(request,response);
-            return;
-        }
     }
 
 
