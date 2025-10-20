@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "transaction")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,7 +41,7 @@ public class Transaction {
             timestamp = LocalDateTime.now();
         }
         if(status == null){
-        status = "Pending";
+        status = "PENDING";
         }
     }
 }

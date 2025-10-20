@@ -22,8 +22,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/transactions/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults()); // Optional: for testing
+                );
+
         return http.build();
     }
     @Bean

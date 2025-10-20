@@ -5,7 +5,9 @@ import com.paypal.transaction_service.entity.Transaction;
 import java.util.List;
 
 public interface transactionService {
-    Transaction createTransaction(Transaction transaction);
 
-    List<Transaction>getAllTransactions();
+    Transaction createTransaction(Transaction transaction);
+    public Transaction getTransactionById(Long id);
+
+    public List<Transaction> getTransactionsByUser(Long userId);
 }
