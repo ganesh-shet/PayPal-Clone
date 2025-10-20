@@ -9,7 +9,6 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transactions")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

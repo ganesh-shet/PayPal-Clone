@@ -35,7 +35,7 @@ public class rewardConsumer {
             System.out.println("✅ Processed and saved reward for transaction: " +reward);
     }catch (Exception e){
             System.err.println("❌ Failed to process consumed message: " + e.getMessage());
-            e.printStackTrace();
+            throw e; // Let Spring Kafka handle the retry
         }
 
     }
