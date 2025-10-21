@@ -27,43 +27,53 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         String path = exchange.getRequest().getPath().value();
         String normalizedPath = path.replaceAll("/+$", "");
 
-        if(PUBLIC_PATHS.contains(normalizedPath)){
-            return chain.filter(exchange)
-                    .doOnSubscribe(s -> System.out.println("Proceeding without check"))
-                    .doOnSuccess(v -> System.out.println("successfully passed"))
-                    .doOnError(e -> System.err.println("error occured"));
+        System.out.println("Incoming request path: " + normalizedPath);
+
+        // Allow public paths
+        if (PUBLIC_PATHS.contains(normalizedPath) || normalizedPath.startsWith("/auth/")) {
+            System.out.println("Public path, skipping auth check: " + normalizedPath);
+            return chain.filter(exchange);
         }
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        System.out.println("Authorization header: " + authHeader);
 
-        if(!authHeader.startsWith("Bearer ")){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("❌ Missing or invalid Authorization header");
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
 
-        try{
+        try {
             String token = authHeader.substring(7);
             Claims claims = JwtUtil.validateToken(token);
-            exchange.getRequest().mutate()
-                    .header("X-User-Email", claims.getSubject())
-                    .header("X-User-ID", claims.get("user-id", String.class))
-                    .header("X-User-Role", claims.get("role", String.class))
+
+            System.out.println("✅ Token validated. Claims:");
+            System.out.println("   userId=" + claims.get("userId"));
+            System.out.println("   email=" + claims.getSubject());
+            System.out.println("   role=" + claims.get("role"));
+
+            // Mutate request with claims
+            ServerWebExchange mutatedExchange = exchange.mutate()
+                    .request(exchange.getRequest().mutate()
+                            .header("X-User-Email", claims.getSubject())
+                            .header("X-User-Id", String.valueOf(claims.get("userId")))
+                            .header("X-User-Role", (String) claims.get("role"))
+                            .build())
                     .build();
 
-            return chain.filter(exchange)
-                    .doOnSubscribe(s -> System.out.println("Proceeding without check"))
-                    .doOnSuccess(v -> System.out.println("successfully passed"))
-                    .doOnError(e -> System.err.println("error occured"));
+            return chain.filter(mutatedExchange);
 
-        }catch (Exception e){
+        } catch (Exception e) {
+            System.out.println("❌ JWT validation failed: " + e.getMessage());
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
-
     }
 
     @Override
     public int getOrder() {
-        return 0;
+        return -100;
     }
 }
+

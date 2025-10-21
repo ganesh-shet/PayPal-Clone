@@ -7,12 +7,16 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 public class RateLimitConfig {
+
     @Bean
-    public KeyResolver userKeyResolver() {
+    public KeyResolver userKeyResolver(){
         return exchange -> {
             String userId = exchange.getRequest().getHeaders().getFirst("X-User-Id");
-            //check for userId, if not present use host address
-            return userId != null ? Mono.just(userId) : Mono.just(exchange.getRequest().getHeaders().getHost().getHostName());
+            if (userId != null){
+                return Mono.just(userId);
+            }
+            // fallback via ip address
+            return Mono.just(exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
         };
     }
 }

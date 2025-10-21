@@ -20,10 +20,10 @@ public class Transaction {
     private Long id;
 
     @Column(name ="sender_user_id" , nullable = false)
-    private String senderId;
+    private Long senderId;
 
     @Column(name = "receiver_user_id", nullable = false)
-    private String receiverId;
+    private Long receiverId;
 
     @Column(name = "amount", nullable = false)
     //@Positive(message = " Amount must be positive")
@@ -41,7 +41,7 @@ public class Transaction {
             timestamp = LocalDateTime.now();
         }
         if(status == null){
-            status = "Pending";
+            status = "PENDING";
         }
     }
 }

@@ -16,14 +16,13 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-    @PostMapping("/send")
-    public ResponseEntity sendNotification(@RequestBody Notification notification){
-        Notification sendNotification = notificationService.sendNotification(notification);
-        return new ResponseEntity<>(sendNotification, HttpStatus.CREATED);
+    @PostMapping
+    public Notification sendNotification(@RequestBody Notification notification) {
+        return notificationService.sendNotification(notification);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Notification>> getNotificationsByUserId(@PathVariable String userId){
-        return ResponseEntity.ok(notificationService.getNotificationsByUserId(userId));
+    public List<Notification> getNotificationsByUser(@PathVariable Long userId) {
+        return notificationService.getNotificationsByUserId(userId);
     }
 }
