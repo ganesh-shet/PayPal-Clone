@@ -1,26 +1,27 @@
 package com.paypal.transaction_service.controller;
 
+
 import com.paypal.transaction_service.entity.Transaction;
-import com.paypal.transaction_service.service.transactionService;
+import com.paypal.transaction_service.service.TransactionService;
+import com.paypal.transaction_service.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
 @RestController
-@Data
-@AllArgsConstructor
 @RequestMapping("/api/transactions/")
-public class transactionController {
-    private final transactionService service;
+public class TransactionController {
+    private final TransactionService service;
 
+    public TransactionController(TransactionService service) {
+        this.service = service;
+    }
     @PostMapping("/create")
     public ResponseEntity<?> create(@Valid @RequestBody Transaction transaction,
                                     HttpServletRequest request) {
@@ -61,8 +62,9 @@ public class transactionController {
 
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getTransactionsByUser(@PathVariable("userId") Long userId,
-                                                    HttpServletRequest request) {
+    public ResponseEntity<?> getTransactionsByUser(
+            @PathVariable("userId") Long userId,
+            HttpServletRequest request) {
 
         // Read JWT userId forwarded by gateway
         String tokenUserIdHeader = request.getHeader("X-User-Id");

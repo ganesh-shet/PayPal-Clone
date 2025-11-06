@@ -14,7 +14,7 @@ spring:
       default-topic: transaction-events
 
   datasource:
-    url: jdbc:h2:mem:transaction_db
+    url: jdbc:h2:mem:transactiondb
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -23,3 +23,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+
+  cloud:
+    compatibility-verifier:
+      enabled: false

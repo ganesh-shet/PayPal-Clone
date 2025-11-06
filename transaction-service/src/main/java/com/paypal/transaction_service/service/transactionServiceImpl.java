@@ -2,13 +2,12 @@ package com.paypal.transaction_service.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paypal.transaction_service.dto.TransferRequest;
 import com.paypal.transaction_service.entity.Transaction;
 import com.paypal.transaction_service.kafka.KafkaEventProducer;
-import com.paypal.transaction_service.repository.transactionRepository;
+import com.paypal.transaction_service.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -17,24 +16,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class transactionServiceImpl implements transactionService {
+public class TransactionServiceImpl implements TransactionService {
 
-    private final transactionRepository repository;
+    private final TransactionRepository repository;
     private final ObjectMapper objectMapper;
     private final KafkaEventProducer kafkaEventProducer;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    public transactionServiceImpl(transactionRepository repository, ObjectMapper objectMapper, KafkaEventProducer kafkaEventProducer) {
+    public TransactionServiceImpl(TransactionRepository repository,
+                                  KafkaEventProducer kafkaEventProducer,
+                                  ObjectMapper objectMapper) {
         this.repository = repository;
         this.objectMapper = objectMapper;
         this.kafkaEventProducer = kafkaEventProducer;
     }
 
+
+
     @Override
     public Transaction createTransaction(Transaction request) {
-        //System.out.println("🚀 Entered createTransaction()");
+        System.out.println("🚀 Entered createTransaction()");
 
         Long senderId = request.getSenderId();
         Long receiverId = request.getReceiverId();

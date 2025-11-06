@@ -1,10 +1,10 @@
-package com.paypal.transaction_service.DTO.dto;
+package com.paypal.transaction_service.dto.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
-@Data
-@AllArgsConstructor
+
 public class CaptureRequest {
     private String holdReference;
+
+    public String getHoldReference() { return holdReference; }
+    public void setHoldReference(String holdReference) { this.holdReference = holdReference; }
 }

@@ -1,12 +1,17 @@
-package com.paypal.transaction_service.DTO.dto;
+package com.paypal.transaction_service.dto.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
 public class HoldResponse {
     private String holdReference;
     private Long amount;
     private String status;
+
+    public HoldResponse(String holdReference, Long amount, String status) {
+        this.holdReference = holdReference;
+        this.amount = amount;
+        this.status = status;
+    }
+
+    public String getHoldReference() { return holdReference; }
+    public Long getAmount() { return amount; }
+    public String getStatus() { return status; }
 }
